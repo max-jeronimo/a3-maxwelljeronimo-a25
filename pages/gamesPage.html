@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Games</title>
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+<h1>Stat Tracker</h1>
+
+<form id="gameForm">
+    <label for="gamePlayed">Game Played:</label>
+    <select name="gamePlayed" id="gamePlayed"> required>
+        <option value="">Select a Game</option>
+        <option value="marioKart">Mario Kart</option>
+        <option value="pingPong">Ping Pong</option>
+        <option value="cornHole">Corn Hole</option>
+    </select>
+    <button type="submit">Next</button>
+    </form>
+
+<div id="dynamicForm"></div>
+
+<h2>Game History</h2>
+<ul id="gamesList"></ul>
+
+<script src="/js/gamesPage.js"></script>
+</body>
+</html>

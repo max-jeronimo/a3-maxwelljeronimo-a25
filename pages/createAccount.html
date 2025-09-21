@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Login Page</title>
-    <link href="/css" rel="stylesheet">
+    <title>Signup Page</title>
+    <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-<h1>Login</h1>
-<form id="loginForm">
+<h1>Create Account</h1>
+<form id="signupForm">
     <div class="untitled">
         <label for="email">Email</label>
         <input type="text" id ="email" required><br>
@@ -15,7 +15,9 @@
         <label for="password">Password</label>
         <input type="text" id ="password" required><br>
     </div>
+    <button type="submit" id="submit">Submit</button>
 </form>
-<p>Don't Have an Account? <a href='/pages/createAccount.html'>Create an Account Here</a></p>
+<p>Already Have An Account? <a href='/pages/loginPage.html'>Log in Here</a></p>
 </body>
+<script src="/js/signup.js"></script>
 </html>

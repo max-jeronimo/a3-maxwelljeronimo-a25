@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
     <title>Login Page</title>
-    <link href="/css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <div class="untitled">
-            <label for="email">Email</label>
-            <input type="text" id ="email" required><br>
-        </div>
-        <div class="untitled">
-            <label for="password">Password</label>
-            <input type="text" id ="password" required><br>
-        </div>
-    </form>
+<h1>Login</h1>
+<form id="loginForm">
+    <div class="untitled">
+        <label for="email">Email</label>
+        <input type="text" id ="email" required><br>
+    </div>
+    <div class="untitled">
+        <label for="password">Password</label>
+        <input type="password" id ="password" required><br>
+    </div>
+
+    <button type="submit" id="submit">Submit</button>
+</form>
 <p>Don't Have an Account? <a href='/pages/createAccount.html'>Create an Account Here</a></p>
+<script src="/js/login.js"></script>
 </body>
 </html>
