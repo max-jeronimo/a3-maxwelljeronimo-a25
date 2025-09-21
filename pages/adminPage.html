@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link href='/css/main.css' rel="stylesheet">
+</head>
+<body>
+<h1>Admin Panel</h1>
+<nav>
+    <ul>
+        <li><a href="/mainPage.html">Back to Main Page</a></li>
+        <li>
+            <button id="logoutButton">Logout</button>
+        </li>
+    </ul>
+</nav>
+
+<section>
+    <h2>All Users</h2>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Email</th>
+            <th>Display Name</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="usersTable"></tbody>
+    </table>
+</section>
+<script src="/js/logoutButton.js"></script>
+<script src="/js/adminPage.js"></script>
+</body>
+</html>

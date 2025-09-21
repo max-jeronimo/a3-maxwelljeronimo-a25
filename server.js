@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'pages')));
@@ -17,7 +17,12 @@ app.use(session({
     secret: 'jeronimo-super-key', // signs cookies so they cant be messed with
     resave: false, // no saving if no changes made to db
     saveUninitialized: false, // no empty sessions for users who don't log in
-    store: MongoStore.create({mongoUrl: process.env.MONGO_URI}) // saves into mongodb instead of memory
+    store: MongoStore.create({mongoUrl: process.env.MONGO_URI}), // saves into mongodb instead of memory
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24
+    }
 }))
 
 // Schemas
@@ -28,7 +33,7 @@ const User = mongoose.model('User', new mongoose.Schema({
     role: {type: String, default: 'user'}
 }));
 
-const Game = mongoose.model('Game', new mongoose.Schema( {
+const Game = mongoose.model('Game', new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
     partner: {type: String, default: ""},
     opponents: [String],
@@ -57,14 +62,30 @@ app.post('/api/login', async (req, res) => {
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
-        return res.status(401).json({ error: 'Incorrect Email or Password'});
+        return res.status(401).json({error: 'Incorrect Email or Password'});
     }
 
     req.session.userId = user._id;
-    req.session.user = {id: user._id, displayName: user.displayName};
+    req.session.user = {
+        id: user._id,
+        displayName: user.displayName,
+        role: user.role
+    }
+
 
     res.json({success: true});
 });
+
+app.post('/api/logout', async (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Logout Failed", err);
+            return res.status(500).json({error: "Logout Failed"});
+        }
+        res.clearCookie('connect.sid');
+        res.json({success: true});
+    })
+})
 
 app.post('/api/signup', async (req, res) => {
     const {email, password} = req.body;
@@ -75,14 +96,18 @@ app.post('/api/signup', async (req, res) => {
     }
 
     const hash = await bcrypt.hash(password, 10);
-    user = await User.create ({
+    user = await User.create({
         email,
         passwordHash: hash,
         displayName: email
     });
 
     req.session.userId = user._id;
-    req.session.user = {id: user._id, displayName: user.displayName};
+    req.session.user = {
+        id: user._id,
+        displayName: user.displayName,
+        role: user.role
+    }
 
     res.json({success: true});
 })
@@ -91,9 +116,16 @@ app.get('/api/me', (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({error: 'Not Logged In'});
     }
+    console.log("Current Session User: ", req.session.userId);
     res.json(req.session.user);
 });
 
+app.get('/adminPage.html', (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'admin') {
+        return res.status(403).send("Unauthorized Access");
+    }
+    res.sendFile(path.join(__dirname, 'pages', 'adminPage.html'));
+});
 
 
 app.get('/api/games', async (req, res) => {
@@ -171,12 +203,34 @@ app.delete('/api/games/:id', async (req, res) => {
     res.json({success: true});
 });
 
+app.get('/api/admin/users', async (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'admin') {
+        return res.status(403).json({error: "Unauthorized"});
+    }
+    const users = await User.find({}, 'email displayName role');
+    res.json(users);
+})
+
+app.put('/api/admin/users/${userId}promote', async (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    await User.findByIdAndUpdate(req.params.id, { role: 'admin' });
+    res.json({ success: true });
+});
+
+app.delete('/api/admin/users/${userId}', async (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+});
+
 const PORT = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         app.listen(PORT, () => console.log(`Server starting on port ${PORT}`))
     })
     .catch(err => console.error("Mongo connection failed: ", err));
-
-
 

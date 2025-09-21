@@ -4,17 +4,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const list = document.getElementById('gamesList');
 
 
-
     let currentUser = null;
 
-    async function loadUser(){
+    async function loadUser() {
         const res = await fetch('/api/me');
         if (res.ok) {
             currentUser = await res.json();
         }
     }
 
-    async function loadGames(){
+    async function loadGames() {
         const res = await fetch('/api/games');
         if (!res.ok) {
             list.innerHTML = "<li>Not Logged In!</li>";
@@ -28,11 +27,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const li = document.createElement('li')
 
             const formattedScore = `${game.myScore} - ${game.opponentScore}`;
-            const outcome = game.myScore > game.opponentScore ? "Win":
+            const outcome = game.myScore > game.opponentScore ? "Win" :
                 game.myScore < game.opponentScore ? "Lose" : "Tie";
 
-            const meText = currentUser ? `${currentUser.displayName} (me)`: "me";
-            const partnerText = game.partner ? `${game.partner} + ${meText}`: meText;
+            const meText = currentUser ? `${currentUser.displayName} (me)` : "me";
+            const partnerText = game.partner ? `${game.partner} + ${meText}` : meText;
             const opponentText = game.opponents.join(', ');
 
 
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!form)
             return;
 
-        form.addEventListener('submit', async e =>{
+        form.addEventListener('submit', async e => {
             e.preventDefault();
             const data = Object.fromEntries(new FormData(form).entries());
 
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
-        });
+            });
 
             if (res.ok) {
                 form.reset();

@@ -6,7 +6,24 @@
 </head>
 <body>
 <h1 id="welcome">Welcome!</h1>
-<p>CRAZIEST WORK IN PROGRESS EVER</p>
+
+<nav>
+    <ul>
+        <li><a href="/gamesPage.html">Log/View Stats</a></li>
+        <li>
+            <button id="logoutButton">Logout</button>
+        </li>
+        <li id="adminPanel" style="display:none;"><a href="/adminPage.html">Admin Panel</a></li>
+    </ul>
+</nav>
+<section id="stats">
+    <h2>Your Stats</h2>
+    <p>Total Games: <span id="totalGames">0</span></p>
+    <p>Wins: <span id="wins">0</span></p>
+    <p>Losses: <span id="losses">0</span></p>
+    <p>Ties: <span id="ties">0</span></p>
+</section>
 <script src="/js/main.js"></script>
+<script src="/js/logoutButton.js"></script>
 </body>
 </html>

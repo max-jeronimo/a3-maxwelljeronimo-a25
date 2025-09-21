@@ -9,16 +9,17 @@
 <form id="loginForm">
     <div class="untitled">
         <label for="email">Email</label>
-        <input type="text" id ="email" required><br>
+        <input type="text" id="email" name="email" required><br>
     </div>
     <div class="untitled">
         <label for="password">Password</label>
-        <input type="password" id ="password" required><br>
+        <input type="password" id="password" name="password" required><br>
     </div>
 
     <button type="submit" id="submit">Submit</button>
 </form>
-<p>Don't Have an Account? <a href='/pages/createAccount.html'>Create an Account Here</a></p>
+<p>Don't Have an Account? <a href='/createAccount.html'>Create an Account Here</a></p>
+<!--the server doesn't need /pages, leave it -->
 <script src="/js/login.js"></script>
 </body>
 </html>

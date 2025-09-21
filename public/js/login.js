@@ -1,7 +1,7 @@
 document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
 
-    const formData= new FormData(e.target);
+    const formData = new FormData(e.target);
     const body = Object.fromEntries(formData.entries());
 
     const res = await fetch('/api/login', {
