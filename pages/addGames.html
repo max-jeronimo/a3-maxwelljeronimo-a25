@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Game</title>
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+<h1>Add a Game</h1>
+<nav>
+    <ul>
+        <li><a href="/yourStats.html">Your Stats</a></li>
+        <li><a href="/mainPage.html">Back to Main Page</a></li>
+        <li>
+            <button id="logoutButton">Logout</button>
+        </li>
+    </ul>
+</nav>
+
+<form id="gameForm">
+    <label for="gamePlayed">Game Played:</label>
+    <select name="gamePlayed" id="gamePlayed" required>
+        <option value="">Select a Game</option>
+        <option value="marioKart">Mario Kart</option>
+        <option value="pingPong">Ping Pong</option>
+        <option value="cornHole">Corn Hole</option>
+
+    </select>
+    <button type="submit">Next</button>
+</form>
+
+<div id="gameModal" class="modal">
+    <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <div id ="modalFormContainer" class="modalFormContainer">
+        </div>
+    </div>
+</div>
+<script src="/js/addGames.js"></script>
+<script src="/js/logoutButton.js"></script>
+</body>
+</html>

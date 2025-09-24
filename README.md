@@ -134,3 +134,12 @@ Include a very brief summary of your project here. Images are encouraged, along 
 
 ### Design/Evaluation Achievements
 - **Design Achievement 1**: I followed the following tips from the W3C Web Accessibility Initiative...
+
+
+TESTER ACCOUNT 1 (User):
+cs4241tester@wpi.edu
+tester123
+
+TESTER ACCOUNT 2 (Admin):
+cs4241testerA@wpi.edu
+tester123

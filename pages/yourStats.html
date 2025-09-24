@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Stats</title>
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+<h1>My Stats</h1>
+
+<nav>
+    <ul>
+        <li><a href="/addGames.html">Add New Game</a></li>
+        <li><a href="/mainPage.html">Back to Main Page</a></li>
+        <li>
+            <button id="logoutButton">Logout</button>
+        </li>
+    </ul>
+</nav>
+
+<h2>Past Games</h2>
+<ul id="gamesList"></ul>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span id="closeEditModal" class="close">&times;</span>
+        <div id="editFormContainer"></div>
+    </div>
+</div>
+
+<script src="/js/yourStats.js"></script>
+<script src="/js/logoutButton.js"></script>
+</body>
+</html>

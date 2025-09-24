@@ -1,3 +1,4 @@
+<!--
 async function loadStats() {
     const res = await fetch('/api/games');
     if (!res.ok) {
@@ -24,7 +25,7 @@ async function loadStats() {
     document.getElementById('losses').innerText = losses;
     document.getElementById('ties').innerText = ties;
 }
-
+-->
 fetch('/api/me')
     .then(res => {
         if (!res.ok) throw new Error('Not logged in');

@@ -9,21 +9,31 @@
 
 <nav>
     <ul>
-        <li><a href="/gamesPage.html">Log/View Stats</a></li>
+        <li id="adminPanel" style="display:none;"><a href="/adminPage.html">Admin Panel</a></li>
+        <li><a href="/addGames.html">Add Game</a></li>
+        <li><a href="/yourStats.html">Your Stats</a></li>
+        <li><a href="/yourAccount.html">Account Settings</a></li>
         <li>
             <button id="logoutButton">Logout</button>
         </li>
-        <li id="adminPanel" style="display:none;"><a href="/adminPage.html">Admin Panel</a></li>
     </ul>
 </nav>
-<section id="stats">
+
+
+<!--<section id="stats">
     <h2>Your Stats</h2>
     <p>Total Games: <span id="totalGames">0</span></p>
     <p>Wins: <span id="wins">0</span></p>
     <p>Losses: <span id="losses">0</span></p>
     <p>Ties: <span id="ties">0</span></p>
 </section>
+--->
+<h2>My Stats</h2>
+<div id="statsPreview">
+    Loading Stats...
+</div>
 <script src="/js/main.js"></script>
+<script src="/js/statsPreview.js"></script>
 <script src="/js/logoutButton.js"></script>
 </body>
 </html>

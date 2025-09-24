@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Account</title>
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+<h1>Your Account</h1>
+<nav>
+    <ul>
+        <li><a href="/mainPage.html">Back to Main Page</a></li>
+        <li>
+            <button id="logoutButton">Logout</button>
+        </li>
+    </ul>
+</nav>
+
+<div id="accountInfo">
+    Loading Account Info...
+</div>
+
+<button id="changeDisplayName">Change Display Name</button>
+<button id="changeEmail">Change Email</button>
+<button id="changePassword">Change Password</button>
+
+<div id="editAccount" class="modal" style="display: none">
+    <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <div id="modalFormContainer"></div>
+    </div>
+</div>
+
+<script src="/js/yourAccount.js"></script>
+<script src="/js/logoutButton.js"></script>
+</body>
+</html>
