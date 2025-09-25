@@ -1,20 +1,20 @@
-let currentUser = null;
+let currentUserId = null;
+
+async function loadCurrentUser() {
+    const res = await fetch('/api/me');
+    if (res.ok) {
+        const me = await res.json();
+        currentUserId = me.id;
+    }
+}
 
 async function loadUsers() {
     const res = await fetch('/api/admin/users');
     if (!res.ok) {
-        alert("Failed to Load Users");
+        alert("Failed to load users");
         return;
     }
 
-    async function loadCurrentUser(){
-        const res = await fetch('/api/me');
-        if (res.ok) {
-            currentUser = await res.json();
-        }
-    }
-
-// This is the User Table, where you can promote or demote users, as well as delete them entirely
     const users = await res.json();
     const table = document.getElementById('usersTable');
     table.innerHTML = '';
@@ -25,21 +25,21 @@ async function loadUsers() {
         let actionButtons = '';
 
         if (user.role === 'user') {
-            actionButtons += `<button onClick="makeAdmin('${user._id}')">Promote to Admin</button>`;
+            actionButtons += `<button class="btn btn-sm btn-success me-1" onClick="makeAdmin('${user._id}')">Promote</button>`;
         }
 
         if (user.role === 'admin') {
-            if (user._id === (window.currentUserId || '')) {
-                actionButtons += `<button disabled style="opacity:0.5; cursor:not-allowed;">Demote Admin</button>`;
+            if (user._id === currentUserId) {
+                actionButtons += `<button class="btn btn-sm btn-secondary me-1" disabled>Demote</button>`;
             } else {
-                actionButtons += `<button onClick="demoteAdmin('${user._id}')">Demote Admin</button>`;
+                actionButtons += `<button class="btn btn-sm btn-warning me-1" onClick="demoteAdmin('${user._id}')">Demote</button>`;
             }
         }
 
-        if (user._id === (window.currentUserId || '')) {
-            actionButtons += `<button disabled style="opacity:0.5; cursor:not-allowed;">Delete</button>`;
+        if (user._id === currentUserId) {
+            actionButtons += `<button class="btn btn-sm btn-secondary" disabled>Delete</button>`;
         } else {
-            actionButtons += `<button onclick="removeUser('${user._id}')">Delete</button>`;
+            actionButtons += `<button class="btn btn-sm btn-danger" onclick="removeUser('${user._id}')">Delete</button>`;
         }
 
         row.innerHTML = `
@@ -53,22 +53,21 @@ async function loadUsers() {
 }
 
 async function makeAdmin(userId) {
-    const res = await fetch(`/api/admin/users/${userId}/promote`, {method: 'PUT'});
     if (!confirm("Promote to Admin?")) return;
-    if (res.ok)
-        loadUsers();
-    else alert("Failed to Promote to Admin");
+    const res = await fetch(`/api/admin/users/${userId}/promote`, {method: 'PUT'});
+    if (res.ok) loadUsers();
+    else alert("Failed to promote user");
 }
 
 async function demoteAdmin(userId) {
+    if (!confirm("Demote this admin to user?")) return;
     const res = await fetch(`/api/admin/users/${userId}/demote`, {method: 'PUT'});
-    if (!confirm("Demote to User?")) return;
     if (res.ok) loadUsers();
-    else alert("Failed to Demote User");
+    else alert("Failed to demote admin");
 }
 
 async function removeUser(userId) {
-    if (!confirm("Are you sure?")) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
     const res = await fetch(`/api/admin/users/${userId}`, {method: 'DELETE'});
     if (res.ok) loadUsers();
     else alert("Failed to delete user");
@@ -81,7 +80,6 @@ async function loadGames() {
         return;
     }
 
-    // This the Games Table, where admins can view, edit, and delete any game that has been logged.
     const games = await res.json();
     const table = document.getElementById('gamesTable');
     table.innerHTML = '';
@@ -97,8 +95,8 @@ async function loadGames() {
         const opponentText = game.opponents.join(', ');
 
         const actionButtons = `
-            <button onclick="openEditModal('${game._id}')">Edit</button>
-            <button onclick="deleteGame('${game._id}')">Delete</button>
+            <button class="btn btn-sm btn-primary me-1" onclick="openEditModal('${game._id}')">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteGame('${game._id}')">Delete</button>
         `;
 
         row.innerHTML = `
@@ -119,18 +117,26 @@ window.openEditModal = function (gameId) {
             const editModal = document.getElementById('editModal');
             const editFormContainer = document.getElementById('editFormContainer');
             editFormContainer.innerHTML = `
-                <form id="editForm">
+                <form id="editForm" class="p-2">
                   <input type="hidden" name="gameId" value="${game._id}">
                   <input type="hidden" name="gameType" value="${game.gameType}">
-                  <label>Partner:</label>
-                  <input type="text" name="partner" value="${game.partner || ""}"><br>
-                  <label>Opponents (comma-separated):</label>
-                  <input type="text" name="opponents" value="${game.opponents.join(", ")}" required><br>
-                  <label>My Score:</label>
-                  <input type="number" name="myScore" value="${game.myScore}" required><br>
-                  <label>Opponent Score:</label>
-                  <input type="number" name="opponentScore" value="${game.opponentScore}" required><br>
-                  <button type="submit">Save Changes</button>
+                  <div class="mb-2">
+                    <label class="form-label">Partner</label>
+                    <input type="text" class="form-control" name="partner" value="${game.partner || ""}">
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Opponents</label>
+                    <input type="text" class="form-control" name="opponents" value="${game.opponents.join(", ")}" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">My Score</label>
+                    <input type="number" class="form-control" name="myScore" value="${game.myScore}" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Opponent Score</label>
+                    <input type="number" class="form-control" name="opponentScore" value="${game.opponentScore}" required>
+                  </div>
+                  <button type="submit" class="btn btn-success">Save Changes</button>
                 </form>
             `;
             editModal.style.display = 'block';
@@ -157,19 +163,14 @@ window.openEditModal = function (gameId) {
 }
 
 window.deleteGame = async function (id) {
-    if (!confirm("Delete this Game?")) return;
+    if (!confirm("Delete this game?")) return;
     const res = await fetch(`/api/admin/games/${id}`, {method: 'DELETE'});
     if (res.ok) loadGames();
     else alert("Error deleting game");
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const meRes = await fetch('/api/me');
-    if (meRes.ok) {
-        const me = await meRes.json();
-        window.currentUserId = me.id;
-    }
-
+    await loadCurrentUser();
     await loadUsers();
     await loadGames();
 

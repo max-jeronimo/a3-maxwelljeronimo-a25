@@ -1,95 +1,76 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const gamePlayedForm = document.getElementById('gameForm');
-    const modal = document.getElementById('gameModal');
-    const modalFormContainer = document.getElementById('modalFormContainer');
-    const closeModal = document.getElementById('closeModal');
+    const gameChoiceForm = document.getElementById('gameChoiceForm');
+    const gameFormContainer = document.getElementById('gameFormContainer');
 
-    function openModal(formHtml) {
-        modalFormContainer.innerHTML = formHtml;
-        modal.style.display = 'block';
-        attachGameFormHandler()
+    const gamesWithPartner = ['cornHole'];
 
-    }
+    gameChoiceForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const gamePlayed = document.getElementById('gamePlayed').value;
+        if (!gamePlayed) return;
+        renderGameForm(gamePlayed);
+    });
 
-    closeModal.onclick = () => {
-        modal.style.display = 'none';
-    };
-    window.onclick = e => {
-        if (e.target === modal)
-            modal.style.display = 'none';
-    }
+    function renderGameForm(gamePlayed) {
+        const needsPartner = gamesWithPartner.includes(gamePlayed);
 
-    function attachGameFormHandler() {
-        const form = document.getElementById('logForm');
-        if (!form) return;
+        gameFormContainer.innerHTML = `
+          <form id="gameForm" class="card p-4 shadow-sm">
+            <h4 class="mb-3">Enter ${prettyName(gamePlayed)} Details</h4>
+            <div class="row g-3">
+              ${needsPartner ? `
+              <div class="col-md-6">
+                <input type="text" class="form-control" name="partner" placeholder="Partner (optional)">
+              </div>` : ``}
+              <div class="col-md-6">
+                <input type="text" class="form-control" name="opponents" placeholder="Opponents (comma-separated)" required>
+              </div>
+              <div class="col-md-6">
+                <input type="number" class="form-control" name="myScore" placeholder="My Score" required>
+              </div>
+              <div class="col-md-6">
+                <input type="number" class="form-control" name="opponentScore" placeholder="Opponent Score" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Submit Game</button>
+          </form>
+        `;
 
-        form.addEventListener('submit', async e => {
+        const gameForm = document.getElementById('gameForm');
+        gameForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = Object.fromEntries(new FormData(form).entries());
+            const data = Object.fromEntries(new FormData(gameForm).entries());
+            data.gameType = gamePlayed;
 
-            const res = await fetch('/api/games', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data),
-            });
+            try {
+                const res = await fetch('/api/games', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
 
-            if (res.ok) {
-                form.reset();
-                modal.style.display = 'none';
-                alert("Game logged successfully!");
-            } else {
-                const err = await res.json();
-                alert(err.error || "Error adding game");
+                if (res.ok) {
+                    alert('Game added successfully!');
+                    gameForm.reset();
+                    gameChoiceForm.reset();
+                    gameFormContainer.innerHTML = '';
+                } else {
+                    const err = await res.json();
+                    alert(err.error || 'Error adding game');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error adding game');
             }
         });
     }
 
-    gamePlayedForm.addEventListener('submit', e => {
-        e.preventDefault();
-        const gamePlayed = document.getElementById('gamePlayed').value;
-
-        if (gamePlayed === "pingPong") {
-            openModal(`
-        <form id="logForm">
-          <input type="hidden" name="gameType" value="pingPong">
-          <label>Opponent:</label>
-          <input type="text" name="opponents" required><br>
-          <label>My Score:</label>
-          <input type="number" name="myScore" required><br>
-          <label>Opponent Score:</label>
-          <input type="number" name="opponentScore" required><br>
-          <button type="submit">Add Game</button>
-        </form>`);
+    function prettyName(key) {
+        switch (key) {
+            case 'marioKart': return 'Mario Kart';
+            case 'pingPong': return 'Ping Pong';
+            case 'cornHole': return 'Corn Hole';
+            default: return key;
         }
-
-        if (gamePlayed === "cornHole") {
-            openModal(`
-        <form id="logForm">
-          <input type="hidden" name="gameType" value="cornHole">
-          <label>Partner:</label>
-          <input type="text" name="partner" required><br>
-          <label>Opponents (comma-separated, 2 names):</label>
-          <input type="text" name="opponents" required><br>
-          <label>My Team Score:</label>
-          <input type="number" name="myScore" required><br>
-          <label>Opponent Team Score:</label>
-          <input type="number" name="opponentScore" required><br>
-          <button type="submit">Add Game</button>
-        </form>`);
-        }
-
-        if (gamePlayed === "marioKart") {
-            openModal(`
-        <form id="logForm">
-          <input type="hidden" name="gameType" value="marioKart">
-          <label>Opponents (comma-separated):</label>
-          <input type="text" name="opponents" required><br>
-          <label>My Score:</label>
-          <input type="number" name="myScore" required><br>
-          <label>Opponents' Score:</label>
-          <input type="number" name="opponentScore" required><br>
-          <button type="submit">Add Game</button>
-        </form>`);
-        }
-    });
+    }
 });
